@@ -1,0 +1,6 @@
+.sumTotal li{
+    @apply flex justify-between py-2
+}
+.sumTotal li div:first-child{
+    @apply text-gray-500
+}

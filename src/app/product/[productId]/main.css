@@ -1,0 +1,14 @@
+.mySwiper .swiper-button-prev ,.mySwiper .swiper-button-next{
+    @apply rounded-full !bg-my_green p-4 w-10 h-10 border-2 border-gray-100;
+}
+.swiper-button-prev::after , .swiper-button-next::after{
+    @apply text-xs font-extrabold;
+}
+
+.mySwiper .swiper-slide-active {
+    @apply !border-my_green shadow-lg
+}
+
+/* body {
+    display: none;
+} */
