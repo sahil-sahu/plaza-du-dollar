@@ -78,3 +78,36 @@ export const dummyCard = [
       link: "#"
     },
   ]
+
+ export const quebecCities = [
+    "Montreal",
+    "Quebec City",
+    "Laval",
+    "Gatineau",
+    "Longueuil",
+    "Sherbrooke",
+    "Saguenay",
+    "Levis",
+    "Trois-Rivières",
+    "Terrebonne",
+    "Saint-Jean-sur-Richelieu",
+    "Repentigny",
+    "Brossard",
+    "Drummondville",
+    "Saint-Jérôme",
+    "Granby",
+    "Blainville",
+    "Mirabel",
+    "Shawinigan",
+    "Rimouski",
+    "Saint-Hyacinthe",
+    "Dollard-des-Ormeaux",
+    "Châteauguay",
+    "Mascouche",
+    "Val-d'Or",
+    "Rouyn-Noranda",
+    "Salaberry-de-Valleyfield",
+    "Alma",
+    "Joliette",
+    "Victoriaville"
+  ];
