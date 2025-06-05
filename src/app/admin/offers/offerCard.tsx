@@ -12,14 +12,19 @@ import { useRouter } from 'next/navigation';
 import { databases } from "@/app/appwrite";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 const OfferCard = (payload:{
     image: string;
     name: string;
     id: string;
     showOnLanding?: boolean;
+    showOnHero?: boolean;
 }) =>{
     const router = useRouter();
+    const [isShowOnLanding, setIsShowOnLanding] = useState(payload.showOnLanding || false);
+    const [isShowOnHero, setIsShowOnHero] = useState(payload.showOnHero || false);
+
     const deleteOffer = async () => {
         try {
             await databases.deleteDocument(
@@ -34,18 +39,40 @@ const OfferCard = (payload:{
     }
 
     const toggleShowOnLanding = async () => {
+        const newValue = !isShowOnLanding;
         try {
+            setIsShowOnLanding(newValue); // Update local state immediately
+
             await databases.updateDocument(
                 '67b8c653002efe0cdbb2',
                 'offers',
                 payload.id,
                 {
-                    showOnLanding: !payload.showOnLanding
+                    showOnLanding: newValue
                 }
             );
-            router.refresh();
         } catch (error) {
             console.error('Error updating showOnLanding:', error);
+            setIsShowOnLanding(!newValue); // Revert local state if update fails
+        }
+    };
+
+    const toggleShowOnHero = async () => {
+        const newValue = !isShowOnHero;
+        try {
+            setIsShowOnHero(newValue); // Update local state immediately
+
+            await databases.updateDocument(
+                '67b8c653002efe0cdbb2',
+                'offers',
+                payload.id,
+                {
+                    showOnHero: newValue
+                }
+            );
+        } catch (error) {
+            console.error('Error updating showOnHero:', error);
+            setIsShowOnHero(!newValue); // Revert local state if update fails
         }
     };
 
@@ -63,13 +90,23 @@ const OfferCard = (payload:{
                     <h4 className="text-lg font-semibold">
                         {payload.name}
                     </h4>
-                    <div className="flex items-center space-x-2">
-                        <Checkbox 
-                            id={`showOnLanding-${payload.id}`}
-                            checked={payload.showOnLanding}
-                            onCheckedChange={toggleShowOnLanding}
-                        />
-                        <Label htmlFor={`showOnLanding-${payload.id}`}>Show on Landing</Label>
+                    <div className="flex flex-col gap-2">
+                        <div className="flex items-center space-x-2">
+                            <Checkbox 
+                                id={`showOnLanding-${payload.id}`}
+                                checked={isShowOnLanding}
+                                onCheckedChange={toggleShowOnLanding}
+                            />
+                            <Label htmlFor={`showOnLanding-${payload.id}`}>Show on Landing</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <Checkbox 
+                                id={`showOnHero-${payload.id}`}
+                                checked={isShowOnHero}
+                                onCheckedChange={toggleShowOnHero}
+                            />
+                            <Label htmlFor={`showOnHero-${payload.id}`}>Show on Hero Section</Label>
+                        </div>
                     </div>
                 </div>
                 <div>

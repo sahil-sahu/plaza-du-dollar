@@ -15,6 +15,7 @@ const AddOffer = () => {
     const [name, setName] = useState("");
     const [imageUrls, setImageUrls] = useState<imgObj[]>([]);
     const [showOnLanding, setShowOnLanding] = useState(false);
+    const [showOnHero, setShowOnHero] = useState(false);
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -34,6 +35,7 @@ const AddOffer = () => {
                     offerName: name,
                     image: imageUrls[0],
                     showOnLanding: showOnLanding,
+                    showOnHero: showOnHero,
                     products: []
                 }
             );
@@ -68,13 +70,23 @@ const AddOffer = () => {
                         setUrls={setImageUrls}
                     />
                 </div>
-                <div className="flex items-center space-x-2">
-                    <Checkbox
-                        id="showOnLanding"
-                        checked={showOnLanding}
-                        onCheckedChange={(checked) => setShowOnLanding(checked as boolean)}
-                    />
-                    <Label htmlFor="showOnLanding">Show on Landing Page</Label>
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="showOnLanding"
+                            checked={showOnLanding}
+                            onCheckedChange={(checked) => setShowOnLanding(checked as boolean)}
+                        />
+                        <Label htmlFor="showOnLanding">Show on Landing Page</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="showOnHero"
+                            checked={showOnHero}
+                            onCheckedChange={(checked) => setShowOnHero(checked as boolean)}
+                        />
+                        <Label htmlFor="showOnHero">Show on Hero Section</Label>
+                    </div>
                 </div>
                 <Button type="submit" className="w-full">
                     Create Offer

@@ -46,5 +46,6 @@ export interface Offer extends Models.Document {
     image: imgObj;
     offerName: string;
     showOnLanding?: boolean;
+    showOnHero?: boolean;
     products: Product[];
 }
