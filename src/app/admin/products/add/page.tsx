@@ -27,17 +27,13 @@ const AddProduct = () => {
     const [chips, setChips] = React.useState<string[]>([])
     const [coverUrl, setCover] = React.useState<imgObj[]>([]);
     const [imageUrls, setUrls] = React.useState<imgObj[]>([]);
-
-    const [categoryValue, setCategory] = React.useState("")
+    const [categoryId, setCategoryId] = React.useState("")
 
     async function productAction(prevState: ProductState, formData: FormData): Promise<ProductState> {
-        const json = {
-            ...Object.fromEntries(formData.entries()),
-            cover: coverUrl.length > 0 ? coverUrl[0] : "",
-            gallery: imageUrls,
-            chips,
-        };
-        
+        // if (!categoryId) {
+        //     return { error: "Please select a category" };
+        // }
+
         try {
             await databases.createDocument(
                 '67b8c653002efe0cdbb2',
@@ -57,22 +53,25 @@ const AddProduct = () => {
                     cover: coverUrl.length > 0 ? coverUrl[0] : "",
                     gallery: imageUrls,
                     chips,
+                    category: categoryId
                 }
             )
             setCover([])
             setUrls([])
             setChips([])
-          return { success: "Product added successfully" };
+            setCategoryId("")
+            return { success: "Product added successfully" };
         } catch (error: any) {
             alert(error.message)
-          return { error: error.message || "Adding Product failed" };
+            return { error: error.message || "Adding Product failed" };
         }
-      }
+    }
 
     const [state, formAction] = React.useActionState<ProductState, FormData>(productAction, {});
     const handleChange = (newChips:string[]) => {
         setChips(newChips)
-      }
+    }
+    
     return (
         <section className="bg-gray-200 p-4 !w-full">
         <section>
@@ -117,7 +116,10 @@ const AddProduct = () => {
                     </div>
                     <div>
                         <Label className="block my-1" htmlFor="category">Category</Label>
-                        <CategoryBox value={categoryValue} setValue={setCategory} />
+                        <CategoryBox value={categoryId} setValue={setCategoryId} />
+                        {state.error && state.error.includes("category") && (
+                            <p className="text-red-500 text-sm mt-1">{state.error}</p>
+                        )}
                     </div>
                     <div className="mb-4">
                         <Label htmlFor="brand-name">Brand Name</Label>
@@ -146,7 +148,6 @@ const AddProduct = () => {
                     </div>
                 </div>
                 <div>
-                    {/* <Image src={"/"} width={200} height={200} alt="Cover Image" /> */}
                     <h2 className="text-xl">
                         Cover Image
                     </h2>

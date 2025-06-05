@@ -29,7 +29,7 @@ const EditProduct = ({payload}:{payload:Product}) => {
     const [coverUrl, setCover] = React.useState<imgObj[]>([payload.cover]);
     const [imageUrls, setUrls] = React.useState<imgObj[]>(payload.gallery);
     const router = useRouter();
-    const [categoryValue, setCategory] = React.useState(payload.category?.name ?? "")
+    const [categoryValue, setCategory] = React.useState(payload.category?.$id ?? "")
 
     async function productAction(prevState: ProductState, formData: FormData): Promise<ProductState> {
         const json = {

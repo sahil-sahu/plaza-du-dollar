@@ -5,10 +5,11 @@ export interface imgObj {
     url : string;
     id: string;
 }
-export interface categoryObj {
+export interface categoryObj extends Models.Document {
     name: string;
     image_url : string;
     image_id: string;
+    showOnLanding?: boolean;
 }
 export interface productPayload {
     name:string;
@@ -39,4 +40,11 @@ export interface Product extends Models.Document {
     category: categoryObj|null;
     additional: string|null;
     specification: string|null;
+}
+
+export interface Offer extends Models.Document {
+    image: imgObj;
+    offerName: string;
+    showOnLanding?: boolean;
+    products: Product[];
 }
