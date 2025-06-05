@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings,Blinds, PercentSquare, PercentIcon } from "lucide-react"
 
 import {
   Sidebar,
@@ -24,6 +24,16 @@ const items = [
     title: "All Products",
     url: "/admin/products",
     icon: Inbox,
+  },
+  {
+    title: "Categories",
+    url: "/admin/categories",
+    icon: Blinds,
+  },
+  {
+    title: "Offers",
+    url: "/admin/offers",
+    icon: PercentIcon,
   },
 ]
 
