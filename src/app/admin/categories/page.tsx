@@ -35,6 +35,7 @@ const Categories = async () => {
                                 image={cat.image_url} 
                                 name={cat.name}
                                 showOnLanding={cat.showOnLanding}
+                                showExpanded={cat.showExpanded}
                             />
                         ))
                     }

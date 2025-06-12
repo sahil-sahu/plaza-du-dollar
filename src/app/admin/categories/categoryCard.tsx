@@ -18,6 +18,7 @@ const CatCard = (payload:{
     name: string;
     id: string;
     showOnLanding?: boolean;
+    showExpanded?: boolean;
 }) =>{
     const router = useRouter();
     const deleteProduct = async () => {
@@ -43,6 +44,22 @@ const CatCard = (payload:{
         }
     };
 
+    const toggleShowExpanded = async () => {
+        try {
+            await databases.updateDocument(
+                '67b8c653002efe0cdbb2',
+                'category',
+                payload.id,
+                {
+                    showExpanded: !payload.showExpanded
+                }
+            );
+            router.refresh();
+        } catch (error) {
+            console.error('Error updating showExpanded:', error);
+        }
+    };
+
     return(
         <div className="rounded-xl p-4 bg-white">
             <div className="grid grid-cols-3 items-center">
@@ -51,13 +68,23 @@ const CatCard = (payload:{
                     <h4>
                         {payload.name}
                     </h4>
-                    <div className="flex items-center space-x-2">
-                        <Checkbox 
-                            id={`showOnLanding-${payload.id}`}
-                            checked={payload.showOnLanding}
-                            onCheckedChange={toggleShowOnLanding}
-                        />
-                        <Label htmlFor={`showOnLanding-${payload.id} text-xs`}>Show on Landing</Label>
+                    <div className="flex flex-col gap-2">
+                        <div className="flex items-center space-x-2">
+                            <Checkbox 
+                                id={`showOnLanding-${payload.id}`}
+                                checked={payload.showOnLanding}
+                                onCheckedChange={toggleShowOnLanding}
+                            />
+                            <Label htmlFor={`showOnLanding-${payload.id} text-xs`}>Show on Landing</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <Checkbox 
+                                id={`showExpanded-${payload.id}`}
+                                checked={payload.showExpanded}
+                                onCheckedChange={toggleShowExpanded}
+                            />
+                            <Label htmlFor={`showExpanded-${payload.id} text-xs`}>Show Expanded</Label>
+                        </div>
                     </div>
                 </div>
                 <div>

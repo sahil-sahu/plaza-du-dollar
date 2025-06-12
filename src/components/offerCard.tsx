@@ -11,13 +11,14 @@ import {
 import Image from "next/image";
 import { DotButton, useDotButton } from '@/components/ui/carouselDots';
 import { useEffect, useState } from "react";
+import { Offer } from "@/types";
 
-interface Offer {img:string; link: string;}
-const OfferCard = ({img, link}:Offer) =>{
+// interface Offer {img:string; link: string;}
+const OfferCard = ({offer : {image:img, $id:link}}:{offer : Offer}) =>{
      return (
-        <Link href={link} className="relative rounded">
+        <Link href={`/offer/${link}`} className="relative rounded aspect-video">
             
-            <Image src={img} alt={""} width={500} height={282} className="w-full h-full m-auto object-fill" />
+            <Image src={img.url} alt={img.name} width={500} height={282} className="aspect-video w-full h-full m-auto object-fill" />
             
         </Link>
      )
@@ -43,7 +44,7 @@ const OfferCarousel = ({offerlist}: {offerlist:Offer[]}) =>{
             {
               offerlist.map((card, id) => (
                 <CarouselItem key={id} className="md:basis-1/2 lg:basis-1/3">
-                    <OfferCard  link={card.link} img={card.img} />
+                    <OfferCard offer={card} />
                 </CarouselItem>
               ))
             }

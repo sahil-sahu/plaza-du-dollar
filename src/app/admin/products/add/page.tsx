@@ -44,7 +44,7 @@ const AddProduct = () => {
                     description: formData.get("description"),
                     additional: formData.get("additional"),
                     specification: formData.get("specification"),
-                    price: +(formData.get("price") ?? 0),
+                    
                     brand: formData.get("brand"),
                     sku: +(formData.get("sku") ?? 0),
                     stock: +(formData.get("stock") ?? 0),
@@ -110,10 +110,7 @@ const AddProduct = () => {
                         <Label htmlFor="specification">Specification</Label>
                         <Textarea id="specification" name="specification" required></Textarea>
                     </div>
-                    <div className="mb-4">
-                        <Label htmlFor="price">Price</Label>
-                        <Input type="number" id="price" name="price" required />
-                    </div>
+                    
                     <div>
                         <Label className="block my-1" htmlFor="category">Category</Label>
                         <CategoryBox value={categoryId} setValue={setCategoryId} />
@@ -139,8 +136,8 @@ const AddProduct = () => {
                             <Input type="number" id="Reg-price" name="Reg-price" required />
                         </div>
                         <div className="mb-4">
-                            <Label htmlFor="sale-price">Sale Price</Label>
-                            <Input type="number" id="sale-price" name="sale-price" required />
+                            <Label htmlFor="Sale-price">Sale Price</Label>
+                            <Input type="number" id="sale-price" name="Sale-price" required />
                         </div>
                     </div>
                     <div className="w-full">

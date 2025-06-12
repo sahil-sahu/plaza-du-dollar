@@ -10,6 +10,7 @@ export interface categoryObj extends Models.Document {
     image_url : string;
     image_id: string;
     showOnLanding?: boolean;
+    showExpanded?: boolean;
 }
 export interface productPayload {
     name:string;

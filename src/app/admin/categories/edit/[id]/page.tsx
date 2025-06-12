@@ -7,10 +7,14 @@ import FileUpload from "@/app/admin/products/add/fileUpload";
 import { imgObj, categoryObj } from "@/types";
 import { useRouter } from "next/navigation";
 import { Models } from "appwrite";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 const EditCategory = ({ params }: { params: { id: string } }) => {
     const [name, setName] = useState("");
     const [imageUrls, setImageUrls] = useState<imgObj[]>([]);
+    const [showOnLanding, setShowOnLanding] = useState(false);
+    const [showExpanded, setShowExpanded] = useState(false);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
@@ -24,6 +28,8 @@ const EditCategory = ({ params }: { params: { id: string } }) => {
                 ) as Models.Document & categoryObj;
                 
                 setName(category.name);
+                setShowOnLanding(category.showOnLanding || false);
+                setShowExpanded(category.showExpanded || false);
                 if (category.image_url) {
                     setImageUrls([{
                         url: category.image_url,
@@ -56,7 +62,9 @@ const EditCategory = ({ params }: { params: { id: string } }) => {
                 params.id,
                 {
                     name: name,
-                    image_url: imageUrls[0].url
+                    image_url: imageUrls[0].url,
+                    showOnLanding: showOnLanding,
+                    showExpanded: showExpanded
                 }
             );
             router.push("/admin/categories");
@@ -93,6 +101,24 @@ const EditCategory = ({ params }: { params: { id: string } }) => {
                         imageUrls={imageUrls}
                         setUrls={setImageUrls}
                     />
+                </div>
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="showOnLanding"
+                            checked={showOnLanding}
+                            onCheckedChange={(checked) => setShowOnLanding(checked as boolean)}
+                        />
+                        <Label htmlFor="showOnLanding">Show on Landing Page</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="showExpanded"
+                            checked={showExpanded}
+                            onCheckedChange={(checked) => setShowExpanded(checked as boolean)}
+                        />
+                        <Label htmlFor="showExpanded">Show Expanded</Label>
+                    </div>
                 </div>
                 <Button type="submit" className="w-full">
                     Update Category

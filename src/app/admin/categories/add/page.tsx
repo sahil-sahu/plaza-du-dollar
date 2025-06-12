@@ -8,10 +8,14 @@ import { imgObj } from "@/types";
 import { useRouter } from "next/navigation";
 import { ID } from "appwrite";
 import { databases } from "@/app/appwrite";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 const AddCategory = () => {
     const [name, setName] = useState("");
     const [imageUrls, setImageUrls] = useState<imgObj[]>([]);
+    const [showOnLanding, setShowOnLanding] = useState(false);
+    const [showExpanded, setShowExpanded] = useState(false);
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -30,7 +34,9 @@ const AddCategory = () => {
                 {
                     name: name,
                     image_url: imageUrls[0].url,
-                    image_id: imageUrls[0].id
+                    image_id: imageUrls[0].id,
+                    showOnLanding: showOnLanding,
+                    showExpanded: showExpanded
                 }
             );
             router.push("/admin/categories");
@@ -63,6 +69,24 @@ const AddCategory = () => {
                         imageUrls={imageUrls}
                         setUrls={setImageUrls}
                     />
+                </div>
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="showOnLanding"
+                            checked={showOnLanding}
+                            onCheckedChange={(checked) => setShowOnLanding(checked as boolean)}
+                        />
+                        <Label htmlFor="showOnLanding">Show on Landing Page</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="showExpanded"
+                            checked={showExpanded}
+                            onCheckedChange={(checked) => setShowExpanded(checked as boolean)}
+                        />
+                        <Label htmlFor="showExpanded">Show Expanded</Label>
+                    </div>
                 </div>
                 <Button type="submit" className="w-full">
                     Create Category
