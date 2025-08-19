@@ -18,6 +18,7 @@ export default async function Home() {
   const landingCategories = await getLandingCategories();
   const landingOffers = await getLandingOffers();
   const expandedCategories = await getExpandedCategories();
+  console.log(expandedCategories);
 
   return (
     <>
@@ -37,7 +38,7 @@ export default async function Home() {
           {/* Products */}
           <div className="grid grid-cols-2 lg:grid-cols-5 md:grid-cols-3 gap-4 p-4">
             {dummyCard.map((card) => (
-              <Card1 key={card.id} mrp={card.mrp} sp={card.price} name={card.name} img={card.image} />
+              <Card1 uid={"card.id"} key={card.id} mrp={card.mrp} sp={card.price} name={card.name} img={card.image} />
             ))}
           </div>
       </section>

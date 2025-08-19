@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const Card1 = ({img, mrp, sp, name}:{img:string; mrp:number; sp:number; name:string}) =>{
+const Card1 = ({img, mrp, sp, name, uid}:{img:string; mrp:number; sp:number; name:string; uid:string;}) =>{
      return (
-        <Link href={'/product/demo'}>
+        <Link href={'/product/'+uid}>
             <div className="rounded-xl relative hover:border-my_green border-gray-300 ease-in-out duration-150 border-2 overflow-hidden">
             {sp < mrp ? (
                 <div className="rounded-bl-xl absolute right-0 bg-my_green p-2 text-white origin-top-right top-0">

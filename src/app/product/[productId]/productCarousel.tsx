@@ -30,8 +30,8 @@ const ProductCarousel = ({imgs}:{imgs:string[]}) => {
       >
         {
             imgs.map((img, index) => (
-              <SwiperSlide className='w-full h-full border-2 rounded border-gray-400'  key={index}>
-                <ImageMagnifier className='h-full w-full object-contain' src={img} />
+              <SwiperSlide className='w-full h-full border-2 rounded flex justify-center items-center'  key={index}>
+                <ImageMagnifier className='h-full m-auto' src={img} />
               </SwiperSlide>
             ))
 

@@ -48,7 +48,7 @@ const ImageMagnifier: React.FC<ImageMagnifierProps> = ({
     };
 
     return (
-        <div className="relative inline-block h-[60dvh] w-full">
+        <div className="relative inline-block h-[60dvh] m-auto aspect-square">
             <img
                 src={src}
                 className={className}

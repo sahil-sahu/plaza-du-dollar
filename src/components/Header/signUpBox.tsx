@@ -3,11 +3,11 @@ import Image from 'next/image';
 import profile from './assets/Profile.svg'
 import Link from 'next/link';
 import { account } from '@/app/appwrite';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 
 const SignUpBox = () =>{
     const [logged, setLogin] = useState<string|undefined>();
-    useEffect(()=>{
+    useLayoutEffect(()=>{
         const check = async () => {
             try {
                 const user = await account.getSession('current');

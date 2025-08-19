@@ -36,6 +36,7 @@ const ExpandedCategory = ({ name, image_url, $id, products }: ExpandedCategoryPr
                     products.map((product) => (
                         <Card1 
                             key={product.$id}
+                            uid={product.$id}
                             name={product.name}
                             img={product.cover.url}
                             mrp={product.regPrice}

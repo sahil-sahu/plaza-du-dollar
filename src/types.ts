@@ -50,3 +50,9 @@ export interface Offer extends Models.Document {
     showOnHero?: boolean;
     products: Product[];
 }
+
+export interface Cart extends Models.Document {
+    customer_id: string;
+    product: Product;
+    quantity: number;
+}
