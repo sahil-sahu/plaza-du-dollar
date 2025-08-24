@@ -22,6 +22,8 @@ import OrderSummaryClient from "@/app/checkout/OrderSummaryClient"
 import { useForm, Controller } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { account } from "../appwrite"
+import { toast, Toaster } from "sonner";
 
 const CheckoutSchema = z.object({
     firstName: z.string().min(1, "First name is required"),
@@ -62,12 +64,52 @@ const CheckoutPage = () => {
         },
     });
 
-    const onSubmit = (values: z.infer<typeof CheckoutSchema>) => {
+    const onSubmit = async (values: z.infer<typeof CheckoutSchema>) => {
         console.log("Checkout submit", values);
+        try {
+            const { jwt } = await account.createJWT();
+            const response = await fetch("/order/createOrder", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${jwt}`,
+                },
+                body: JSON.stringify(values),
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Order creation failed: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            // Handle different payment methods
+            if (values.paymentMethod === "cod") {
+                // Cash on Delivery - redirect to success page
+                window.location.href = `/order/success?oid=${result.orderId}`;
+            } else if (values.paymentMethod === "paypal" && result.approvalUrl) {
+                // PayPal - redirect to PayPal for payment
+                window.location.href = result.approvalUrl;
+            } else if (values.paymentMethod === "square" && result.checkoutUrl) {
+                // Square - redirect to Square checkout for payment
+                window.location.href = result.checkoutUrl;
+            } else {
+                // Fallback to success page
+                window.location.href = `/order/success?oid=${result.orderId}`;
+            }
+            
+        } catch (error) {
+            console.error("Failed to create order", error);
+            toast.error("Failed to process your order. Please try again.", {
+                position: "bottom-right",
+                duration: 5000,
+            });
+        }
     };
 
     return (
         <>
+        <Toaster />
         <Header />
         <section className="grid grid-cols-3 p-4 gap-4">
             <div className="col-span-2 bg-green-100">
