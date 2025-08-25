@@ -18,7 +18,7 @@ export default async function Home() {
   const landingCategories = await getLandingCategories();
   const landingOffers = await getLandingOffers();
   const expandedCategories = await getExpandedCategories();
-  console.log(expandedCategories);
+  // console.log(expandedCategories);
 
   return (
     <>

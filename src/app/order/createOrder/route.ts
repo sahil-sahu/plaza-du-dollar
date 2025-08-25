@@ -1,6 +1,6 @@
 import { databases } from "@/appwrite_server";
 import { NextRequest, NextResponse } from "next/server";
-import { Client, Account, ID, Query } from "node-appwrite";
+import { Client, Account, ID, Query, Permission, Role } from "node-appwrite";
 import type { Product } from "@/types";
 import { createPaypalOrder } from "../pg/paypalOrder";
 import { createSquareOrder } from "../pg/squareOrder";
@@ -97,6 +97,9 @@ export async function POST(req: NextRequest) {
         "orders",
         ID.unique(),
         orderDoc,
+        [
+          Permission.read(Role.user(user.$id)),
+        ]
       );
     } catch (e) {
       console.error(e);
@@ -113,7 +116,7 @@ export async function POST(req: NextRequest) {
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
         const { id, approvalUrl: url } = await createPaypalOrder({
           value: total,
-          currencyCode: "CAD",
+          currencyCode: "USD",
           returnUrl: `${baseUrl}/order/paypal-success?oid=${created.$id}`,
           cancelUrl: `${baseUrl}/order/cancel?oid=${created.$id}`,
         });
