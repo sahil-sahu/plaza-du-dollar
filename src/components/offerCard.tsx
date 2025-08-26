@@ -16,7 +16,7 @@ import { Offer } from "@/types";
 // interface Offer {img:string; link: string;}
 const OfferCard = ({offer : {image:img, $id:link}}:{offer : Offer}) =>{
      return (
-        <Link href={`/offer/${link}`} className="relative rounded aspect-video">
+        <Link href={`/offers/${link}`} className="relative rounded aspect-video">
             
             <Image src={img.url} alt={img.name} width={500} height={282} className="aspect-video w-full h-full m-auto object-fill" />
             

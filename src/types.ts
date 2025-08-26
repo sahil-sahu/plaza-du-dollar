@@ -56,3 +56,11 @@ export interface Cart extends Models.Document {
     product: Product;
     quantity: number;
 }
+
+export interface Offer extends Models.Document {
+    image: imgObj;
+    offerName: string;
+    showOnLanding?: boolean;
+    showOnHero?: boolean;
+    products: Product[];
+}
