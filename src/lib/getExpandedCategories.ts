@@ -12,7 +12,8 @@ const fetchExpandedCategories = unstable_cache(
                 "67b8c653002efe0cdbb2",
                 "category",
                 [
-                    Query.equal("showExpanded", true)
+                    Query.equal("showExpanded", true),
+                    Query.select(["*", "products.*", "products.cover.*", "products.gallery.*", "products.category.*"])
                 ]
             );
 
@@ -24,6 +25,7 @@ const fetchExpandedCategories = unstable_cache(
                         "products",
                         [
                             Query.equal("category", category.$id),
+                            Query.select(["*", "cover.*", "gallery.*", "category.*"]),
                             Query.limit(5) // Limit to 5 products per category
                         ]
                     );

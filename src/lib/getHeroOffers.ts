@@ -11,7 +11,8 @@ const fetchHeroOffers = unstable_cache(
                 "67b8c653002efe0cdbb2",
                 "offers",
                 [
-                    Query.equal("showOnHero", true)
+                    Query.equal("showOnHero", true),
+                    Query.select(["*", "image.*"]),
                 ]
             );
             

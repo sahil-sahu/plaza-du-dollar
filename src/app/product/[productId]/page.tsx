@@ -5,6 +5,7 @@ import SimilarProducts from "./similarProducts";
 import { databases } from "@/appwrite_server";
 import { Product } from "@/types";
 import ProductContent from "./ProductContent";
+import { Query } from "node-appwrite";
 
 interface ProductPageProps {
   params: Promise<{ productId: string }>;
@@ -15,7 +16,10 @@ const ProductPage = async ({ params }: ProductPageProps) => {
     const product = await databases.getDocument(
       "67b8c653002efe0cdbb2",
       "products",
-      (await params).productId
+      (await params).productId,
+      [
+        Query.select(["*", "cover.*", "gallery.*", "category.*"]),
+      ]
     ) as Product;
     // You can pass product to child components as needed
     // console.log(product);

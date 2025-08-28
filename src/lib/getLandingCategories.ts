@@ -11,7 +11,8 @@ const fetchLandingCategories = unstable_cache(
                 "67b8c653002efe0cdbb2",
                 "category",
                 [
-                    Query.equal("showOnLanding", true)
+                    Query.equal("showOnLanding", true),
+                    Query.select(["*", "products.*", "products.cover.*", "products.gallery.*", "products.category.*"]),
                 ]
             );
             

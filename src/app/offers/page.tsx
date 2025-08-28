@@ -3,11 +3,15 @@ import OfferCard from "./offerCard";
 import { Offer } from "@/types";
 import Header from "@/components/Header/header";
 import Footer from "@/components/Footer/footer";
+import { Query } from "node-appwrite";
 
 const Offers = async () => {
     const offers = await databases.listDocuments(
         '67b8c653002efe0cdbb2',
-        'offers'
+        'offers',
+        [
+            Query.select(["*", "image.*"]),
+        ]
     );
     return (
         <>

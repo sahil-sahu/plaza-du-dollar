@@ -11,7 +11,8 @@ const fetchLandingOffers = unstable_cache(
                 "67b8c653002efe0cdbb2",
                 "offers",
                 [
-                    Query.equal("showOnLanding", true)
+                    Query.equal("showOnLanding", true),
+                    Query.select(["*", "image.*"]),
                 ]
             );
             

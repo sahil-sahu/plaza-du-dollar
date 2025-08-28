@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RefreshCw } from "lucide-react";
+import { Query } from "appwrite";
 
 const Offers = () => {
     const [offers, setOffers] = useState<Offer[]>([]);
@@ -20,7 +21,8 @@ const Offers = () => {
         try {
             const {documents} = await databases.listDocuments(
                 "67b8c653002efe0cdbb2",
-                "offers"
+                "offers",
+                [Query.select(["*", "image.*"])],
             );
             setOffers(documents as Offer[]);
         } catch (error) {

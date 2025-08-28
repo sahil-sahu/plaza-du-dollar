@@ -12,6 +12,7 @@ export const dynamic = 'force-dynamic';
 const Products = async ({ searchParams : searchParams_ }: { searchParams: Promise<{ category?: string }> }) => {
     try {
         let queries = [];
+        queries.push(Query.select(["*", "cover.*", "gallery.*", "category.*"]));
         const searchParams = await searchParams_;
         // Add category filter if provided
         if (searchParams.category) {
@@ -30,7 +31,7 @@ const Products = async ({ searchParams : searchParams_ }: { searchParams: Promis
             "products",
             queries.length > 0 ? queries : undefined
         );
-        
+        // console.log(documents)
         const docs = documents as Product[];
 
         return (

@@ -10,7 +10,15 @@ import { Models } from "appwrite";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-const EditCategory = ({ params }: { params: { id: string } }) => {
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
+const EditCategory = async ({ params }: PageProps) => {
+    const resolvedParams = await params;
     const [name, setName] = useState("");
     const [imageUrls, setImageUrls] = useState<imgObj[]>([]);
     const [showOnLanding, setShowOnLanding] = useState(false);
@@ -24,7 +32,7 @@ const EditCategory = ({ params }: { params: { id: string } }) => {
                 const category = await databases.getDocument(
                     "67b8c653002efe0cdbb2",
                     "category",
-                    params.id
+                    resolvedParams.id
                 ) as Models.Document & categoryObj;
                 
                 setName(category.name);
@@ -45,7 +53,7 @@ const EditCategory = ({ params }: { params: { id: string } }) => {
             }
         };
         fetchCategory();
-    }, [params.id]);
+    }, [resolvedParams.id]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -59,7 +67,7 @@ const EditCategory = ({ params }: { params: { id: string } }) => {
             await databases.updateDocument(
                 "67b8c653002efe0cdbb2",
                 "category",
-                params.id,
+                resolvedParams.id,
                 {
                     name: name,
                     image_url: imageUrls[0].url,

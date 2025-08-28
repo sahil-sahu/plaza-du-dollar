@@ -10,7 +10,8 @@ export async function getCartItemsByCustomerId(customerId: string): Promise<Cart
 			"67b8c653002efe0cdbb2",
 			"cart",
 			[
-				Query.equal("customer_id", customerId)
+				Query.equal("customer_id", customerId),
+				Query.select(["*", "product.*", "product.cover.*", "product.gallery.*", "product.category.*"])
 			]
 		);
         console.log(documents);

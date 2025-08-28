@@ -4,13 +4,17 @@ import Header from "@/components/Header/header";
 import Footer from "@/components/Footer/footer";
 import Image from "next/image";
 import Card1 from "@/components/card1";
+import { Query } from "node-appwrite";
 
 async function getOffer(offerId: string): Promise<Offer | null> {
   try {
     const offer = await databases.getDocument(
       '67b8c653002efe0cdbb2',
       'offers',
-      offerId
+      offerId,
+      [
+        Query.select(["*", "image.*"]),
+      ]
     );
     return offer as unknown as Offer;
   } catch (error) {

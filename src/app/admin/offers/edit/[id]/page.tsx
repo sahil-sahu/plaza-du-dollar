@@ -10,7 +10,7 @@ import { Models } from "appwrite";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-const EditOffer = ({ params }: { params: { id: string } }) => {
+const EditOffer = ({ params }: { params: Promise<{ id: string }> }) => {
     const [name, setName] = useState("");
     const [imageUrls, setImageUrls] = useState<imgObj[]>([]);
     const [showOnLanding, setShowOnLanding] = useState(false);
@@ -24,7 +24,7 @@ const EditOffer = ({ params }: { params: { id: string } }) => {
                 const offer = await databases.getDocument(
                     "67b8c653002efe0cdbb2",
                     "offers",
-                    params.id
+                    (await params).id
                 ) as Models.Document & Offer;
                 
                 setName(offer.offerName);
@@ -41,7 +41,7 @@ const EditOffer = ({ params }: { params: { id: string } }) => {
             }
         };
         fetchOffer();
-    }, [params.id]);
+    }, [params]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -55,7 +55,7 @@ const EditOffer = ({ params }: { params: { id: string } }) => {
             await databases.updateDocument(
                 "67b8c653002efe0cdbb2",
                 "offers",
-                params.id,
+                (await params).id,
                 {
                     offerName: name,
                     image: imageUrls[0],
