@@ -9,13 +9,6 @@ import Image from "next/image";
 import { getHeroOffers } from "@/lib/getHeroOffers";
 import HeroDots from "./hero-dots";
 
-// Define the type for our hero offers
-interface HeroOffer {
-    image: string;
-    name: string;
-    id: string;
-}
-
 // Make the component async to fetch data
 async function CarouselComponent() {
     // Fetch hero offers

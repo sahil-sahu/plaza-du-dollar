@@ -1,6 +1,5 @@
 'use client'
 import {
-    Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
@@ -12,14 +11,12 @@ import { Label } from "@/components/ui/label"
 import CategoryBox from "../../add/categoryBox"
 import React from 'react'
 import { MuiChipsInput } from 'mui-chips-input'
-import Image from "next/image"
 import FileUpload from "../../add/fileUpload"
-import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { imgObj, Product, productPayload } from "@/types"
-import { databases, ID } from "@/app/appwrite"
-import { redirect, useRouter } from 'next/navigation'
+import { imgObj, Product } from "@/types"
+import { databases } from "@/app/appwrite"
+import { useRouter } from 'next/navigation'
 type ProductState = {
     error?: string;
     success?: string;
@@ -31,14 +28,7 @@ const EditProduct = ({payload}:{payload:Product}) => {
     const router = useRouter();
     const [categoryValue, setCategory] = React.useState(payload.category?.$id ?? "")
 
-    async function productAction(prevState: ProductState, formData: FormData): Promise<ProductState> {
-        const json = {
-            ...Object.fromEntries(formData.entries()),
-            cover: coverUrl.length > 0 ? coverUrl[0] : "",
-            gallery: imageUrls,
-            chips,
-        };
-        
+    async function productAction(_prevState: ProductState, formData: FormData): Promise<ProductState> {        
         try {
             await databases.updateDocument(
                 '67b8c653002efe0cdbb2',
@@ -62,16 +52,17 @@ const EditProduct = ({payload}:{payload:Product}) => {
             )
             router.push("/admin/products")
           return { success: "Product added successfully" };
-        } catch (error: any) {
-            alert(error.message)
-          return { error: error.message || "Adding Product failed" };
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'Adding Product failed';
+            alert(errorMessage);
+            return { error: errorMessage };
         }
       }
 
-    const [state, formAction] = React.useActionState<ProductState, FormData>(productAction, {});
-    const handleChange = (newChips:string[]) => {
-        setChips(newChips)
-      }
+    const formAction = React.useActionState<ProductState, FormData>(productAction, {})[1];
+    const handleChange = (newChips: string[]) => {
+        setChips(newChips);
+    };
     return (
         <section className="bg-gray-200 p-4 !w-full">
         <section>

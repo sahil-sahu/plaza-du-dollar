@@ -1,35 +1,36 @@
 "use client"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import Header from "@/components/Header/header"
 import { CheckCircle, Package } from "lucide-react"
 import Link from "next/link"
+import { Order } from "@/types"
 
 const OrderReturnPage = () => {
     const searchParams = useSearchParams()
     const orderId = searchParams.get("oid")
-    const [orderDetails, setOrderDetails] = useState<any>(null)
+    const [orderDetails, setOrderDetails] = useState<Order | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        const fetchOrderDetails = async () => {
+            try {
+                const response = await fetch(`/api/orders/${orderId}`)
+                if (response.ok) {
+                    const order: Order = await response.json()
+                    setOrderDetails(order)
+                }
+            } catch (error) {
+                console.error("Failed to fetch order details:", error)
+            } finally {
+                setLoading(false)
+            }
+        };
+
         if (orderId) {
             fetchOrderDetails()
         }
     }, [orderId])
-
-    const fetchOrderDetails = async () => {
-        try {
-            const response = await fetch(`/api/orders/${orderId}`)
-            if (response.ok) {
-                const order = await response.json()
-                setOrderDetails(order)
-            }
-        } catch (error) {
-            console.error("Failed to fetch order details:", error)
-        } finally {
-            setLoading(false)
-        }
-    }
 
     if (loading) {
         return (
@@ -117,4 +118,12 @@ const OrderReturnPage = () => {
     )
 }
 
-export default OrderReturnPage
+const SuspenseOrderReturnPage = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <OrderReturnPage />
+        </Suspense>
+    )
+}
+
+export default SuspenseOrderReturnPage

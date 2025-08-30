@@ -1,6 +1,5 @@
 'use client'
 import {
-    Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
@@ -12,12 +11,10 @@ import { Label } from "@/components/ui/label"
 import CategoryBox from "./categoryBox"
 import React from 'react'
 import { MuiChipsInput } from 'mui-chips-input'
-import Image from "next/image"
 import FileUpload from "./fileUpload"
-import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { imgObj, productPayload } from "@/types"
+import { imgObj } from "@/types"
 import { databases, ID } from "@/app/appwrite"
 type ProductState = {
     error?: string;
@@ -61,9 +58,10 @@ const AddProduct = () => {
             setChips([])
             setCategoryId("")
             return { success: "Product added successfully" };
-        } catch (error: any) {
-            alert(error.message)
-            return { error: error.message || "Adding Product failed" };
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'Failed to add product';
+            alert(errorMessage);
+            return { error: errorMessage };
         }
     }
 

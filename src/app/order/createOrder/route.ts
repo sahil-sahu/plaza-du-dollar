@@ -1,9 +1,36 @@
 import { databases } from "@/appwrite_server";
 import { NextRequest, NextResponse } from "next/server";
-import { Client, Account, ID, Query, Permission, Role } from "node-appwrite";
-import type { Product } from "@/types";
+import { Client, Account, ID, Query, Permission, Role, AppwriteException } from "node-appwrite";
+import type { Cart, Product } from "@/types";
 import { createPaypalOrder } from "../pg/paypalOrder";
 import { createSquareOrder } from "../pg/squareOrder";
+import type { Models } from "node-appwrite";
+interface OrderItem {
+  product: Product|string;
+  quantity: number;
+  productPrice: number;
+  productName: string;
+}
+
+interface OrderData {
+  firstName: string;
+  lastName: string;
+  company: string | null;
+  address: string;
+  country: string;
+  state: string;
+  city: string;
+  zip: string;
+  email: string;
+  phone: string;
+  notes: string | null;
+  paymentMethod: string;
+  paymentStatus: string;
+  orderStatus: string;
+  transactionId: string | null;
+  orderedItems: OrderItem[];
+  total: number;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,32 +48,37 @@ export async function POST(req: NextRequest) {
     let user;
     try {
       user = await account.get();
-    } catch (e) {
-      return NextResponse.json({ error: "Unauthorized", message: "Invalid or expired token" }, { status: 401 });
+    } catch (error: unknown) {
+      if (error instanceof AppwriteException) {
+        return NextResponse.json({ error: "Unauthorized", message: "Invalid or expired token" }, { status: 401 });
+      }
     }
-    // console.log(user);
-    const payload = await req.json();
 
+    const payload = await req.json();
+    
+    // console.log("Good till here");
     // Fetch user's cart items
-    let cartResponse: any;
+    let cartResponse: Models.DocumentList<Models.Document>;
     try {
+      if(!user || (user && !user.$id))
+        throw new Error("User not found");
       cartResponse = await databases.listDocuments(
         "67b8c653002efe0cdbb2",
         "cart",
         [Query.equal("customer_id", user.$id)]
       );
-    } catch (e) {
+    } catch {
       return NextResponse.json({ error: "InternalError", message: "Failed to read cart" }, { status: 500 });
     }
-
+    // console.log("Good till here");
     if (!cartResponse?.documents || cartResponse.documents.length === 0) {
       return NextResponse.json({ error: "DataInconsistency", message: "Cart is empty" }, { status: 400 });
     }
     
-    let orderedItems: { product: string; productName: string; productPrice: number; quantity: number }[] = [];
+    let orderedItems: OrderItem[] = [];
     try {
-      orderedItems = (cartResponse.documents || []).map((it: any) => {
-        const product = it.product as Product;
+      orderedItems = ((cartResponse.documents || []) as (Cart & Models.Document)[]).map((it) => {
+        const product = it.product;
         const productId = product.$id;
         const productName = product.name;
         const sale = product.salePrice;
@@ -56,17 +88,19 @@ export async function POST(req: NextRequest) {
         const productPrice = Number(sale);
         return {
           product: productId,
-          productName,
+          quantity: it.quantity,
           productPrice,
-          quantity: Number(it.quantity) || 0,
+          productName,
         };
       });
-    } catch (e: any) {
-      return NextResponse.json({ error: "DataInconsistency", message: e?.message || "Invalid cart items" }, { status: 400 });
+    } catch (_error: Error | unknown) {
+      if(_error instanceof Error)
+        return NextResponse.json({ error: "DataInconsistency", message: _error?.message ?? "Invalid cart items" }, { status: 400 });
+      return NextResponse.json({ error: "DataInconsistency", message: "Invalid cart items" }, { status: 400 });
     }
 
     const total = orderedItems.reduce(
-      (sum: number, item: any) => sum + (item.productPrice || 0) * (item.quantity || 0),
+      (sum: number, item: OrderItem) => sum + (item.productPrice || 0) * (item.quantity || 0),
       0
     );
     
@@ -90,9 +124,9 @@ export async function POST(req: NextRequest) {
       total,
     };
 
-    let created: any;
+    let created: OrderData & Models.Document |undefined;
     try {
-      created = await databases.createDocument(
+      created = await databases.createDocument<OrderData & Models.Document>(
         "67b8c653002efe0cdbb2",
         "orders",
         ID.unique(),
@@ -101,16 +135,17 @@ export async function POST(req: NextRequest) {
           Permission.read(Role.user(user.$id)),
         ]
       );
-    } catch (e) {
-      console.error(e);
+    } catch (_error) {
+      console.error(_error);
       return NextResponse.json({ error: "InternalError", message: "Failed to create order" }, { status: 500 });
     }
-    // console.log(created)
 
     // Handle different payment methods
     let approvalUrl: string | undefined;
     let checkoutUrl: string | undefined;
-    
+    if(!created || (created && !created.$id))
+      return NextResponse.json({ error: "InternalError", message: "Failed to create order" }, { status: 500 });
+
     if (payload.paymentMethod === "paypal") {
       try {
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
@@ -127,8 +162,8 @@ export async function POST(req: NextRequest) {
           { transactionId: id }
         );
         approvalUrl = url;
-      } catch (e) {
-        console.error(e);
+      } catch (_error) {
+        console.error(_error);
         return NextResponse.json({ error: "InternalError", message: "Failed to create PayPal order" }, { status: 500 });
       }
     } else if (payload.paymentMethod === "square") {
@@ -148,8 +183,8 @@ export async function POST(req: NextRequest) {
           { transactionId: id }
         );
         checkoutUrl = url;
-      } catch (e) {
-        console.error(e);
+      } catch (_error) {
+        console.error(_error);
         return NextResponse.json({ error: "InternalError", message: "Failed to create Square order" }, { status: 500 });
       }
     }
@@ -158,11 +193,11 @@ export async function POST(req: NextRequest) {
     try {
       const docs = cartResponse.documents || [];
       await Promise.all(
-        docs.map((doc: any) =>
+        docs.map((doc) =>
           databases.deleteDocument("67b8c653002efe0cdbb2", "cart", doc.$id)
         )
       );
-    } catch (_) {
+    } catch {
       // Non-fatal: if cart clear fails, we still return the created order
     }
 
@@ -173,8 +208,12 @@ export async function POST(req: NextRequest) {
       approvalUrl, 
       checkoutUrl 
     }, { status: 201 });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "InternalError", message: "Unexpected server error" }, { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create order';
+    console.error('Error creating order:', error);
+    return NextResponse.json(
+      { error: errorMessage },
+      { status: 500 }
+    );
   }
 }

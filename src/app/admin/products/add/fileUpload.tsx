@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { imgObj } from "@/types";
 import Dropzone from "dropzone";
 import Image from "next/image";
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const FileUpload = ({id, maxFiles, imageUrls, setUrls}:{id:string ; maxFiles: number|undefined, imageUrls : imgObj[]; setUrls: React.Dispatch<React.SetStateAction<imgObj[]>>}) =>{
     const myDropZone = useRef<Dropzone>(null)
@@ -30,7 +30,7 @@ const FileUpload = ({id, maxFiles, imageUrls, setUrls}:{id:string ; maxFiles: nu
             myDropZone.current?.destroy()
         }
         
-    }, [])
+    }, [id, maxFiles, imageUrls, setUrls])
     return (
         <>
             <div id={id} className="dropzone">

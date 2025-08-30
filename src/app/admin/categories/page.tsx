@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 const Categories = async () => {
     try {
-        const {total, documents} = await databases.listDocuments(
+        const { documents } = await databases.listDocuments(
             "67b8c653002efe0cdbb2",
             "category"
         )

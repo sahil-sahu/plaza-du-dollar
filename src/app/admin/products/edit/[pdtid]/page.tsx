@@ -2,7 +2,7 @@ import { Product } from "@/types";
 import EditProduct from "./editPage";
 import { databases } from "@/appwrite_server";
 import { Query } from "node-appwrite";
-
+import { redirect } from "next/navigation";
 
 const AsyncWrapProduct = async ({
     params,
@@ -15,14 +15,8 @@ const AsyncWrapProduct = async ({
         return (
             <EditProduct payload={doc} />
         )
-    } catch (error) {
-        return (
-            <section>
-                <h1>
-                    Error in Loading Product
-                </h1>
-            </section>
-        )
+    } catch {
+        redirect("/admin/products");
     }
 }
 

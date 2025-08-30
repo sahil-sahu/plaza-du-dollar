@@ -1,6 +1,7 @@
 import fs from "fs/promises"
 import crypto from "crypto"
-import crc32 from "buffer-crc32";
+// import crc32 from "buffer-crc32";
+import { str } from "crc-32";
 import { NextResponse } from 'next/server';
 import { databases } from "@/appwrite_server";
 import { Query } from "node-appwrite";
@@ -72,7 +73,7 @@ export async function POST(request: Request) {
   if (data.event_type === 'CHECKOUT.ORDER.COMPLETED' || data.event_type === 'CHECKOUT.ORDER.APPROVED') {
     try {
       const paymentId = data.resource.id;
-      const status = data.resource.status?.toLowerCase() || '';
+
       
       if (!paymentId) {
         console.warn('No payment ID found in PayPal webhook event');
@@ -135,7 +136,9 @@ export async function POST(request: Request) {
 async function verifySignature(event: string, headers: Request["headers"]) {
   const transmissionId = headers.get('paypal-transmission-id')
   const timeStamp = headers.get('paypal-transmission-time')
-  const crc = parseInt("0x" + crc32(event).toString('hex')); // hex crc32 of raw event data, parsed to decimal form
+  const crcNumber = str(event); // signed 32-bit int
+  const crcHex = (crcNumber >>> 0).toString(16).padStart(8, "0");
+  const crc = parseInt("0x" + crcHex);
 
   const message = `${transmissionId}|${timeStamp}|${WEBHOOK_ID}|${crc}`
   // console.log(`Original signed message ${message}`);

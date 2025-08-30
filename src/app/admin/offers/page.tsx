@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RefreshCw } from "lucide-react";
 import { Query } from "appwrite";
+import { Models } from "appwrite";
 
 const Offers = () => {
     const [offers, setOffers] = useState<Offer[]>([]);
@@ -24,7 +25,7 @@ const Offers = () => {
                 "offers",
                 [Query.select(["*", "image.*"])],
             );
-            setOffers(documents as Offer[]);
+            setOffers(documents as (Offer & Models.DefaultRow)[]);
         } catch (error) {
             console.log(error);
         } finally {

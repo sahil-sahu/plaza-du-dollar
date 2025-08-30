@@ -1,35 +1,43 @@
 "use client"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import Header from "@/components/Header/header"
 import { XCircle, AlertTriangle } from "lucide-react"
 import Link from "next/link"
 
+interface Order {
+  $id: string
+  total: number
+  paymentMethod: string
+  orderStatus: string
+}
+
 const OrderCancelPage = () => {
     const searchParams = useSearchParams()
-    const orderId = searchParams.get("oid")
-    const [orderDetails, setOrderDetails] = useState<any>(null)
+    const orderId = searchParams.get("orderId")
+    const [orderDetails, setOrderDetails] = useState<Order | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        if (orderId) {
-            fetchOrderDetails()
+        const fetchOrderDetails = async () => {
+            if (!orderId) return
+            
+            try {
+                const response = await fetch(`/api/orders/${orderId}`)
+                if (response.ok) {
+                    const order = await response.json()
+                    setOrderDetails(order)
+                }
+            } catch (error: unknown) {
+                console.error("Failed to fetch order details:", error)
+            } finally {
+                setLoading(false)
+            }
         }
+
+        fetchOrderDetails()
     }, [orderId])
 
-    const fetchOrderDetails = async () => {
-        try {
-            const response = await fetch(`/api/orders/${orderId}`)
-            if (response.ok) {
-                const order = await response.json()
-                setOrderDetails(order)
-            }
-        } catch (error) {
-            console.error("Failed to fetch order details:", error)
-        } finally {
-            setLoading(false)
-        }
-    }
 
     if (loading) {
         return (
@@ -92,7 +100,7 @@ const OrderCancelPage = () => {
 
                         <div className="space-y-4">
                             <p className="text-gray-600">
-                                Don't worry! You can complete your order anytime. Your cart items are still saved.
+                                Don&apos;t worry! You can complete your order anytime. Your cart items are still saved.
                             </p>
                             
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -123,4 +131,12 @@ const OrderCancelPage = () => {
     )
 }
 
-export default OrderCancelPage
+const SuspenseOrderCancelPage = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <OrderCancelPage />
+        </Suspense>
+    )
+}
+
+export default SuspenseOrderCancelPage

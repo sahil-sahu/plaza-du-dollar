@@ -39,7 +39,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
         <Footer />
       </>
     );
-  } catch (error) {
+  } catch {
     return (
       <section className="container m-auto my-8">
         <h1 className="text-red-500 text-xl">Error loading product.</h1>

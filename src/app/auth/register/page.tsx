@@ -8,6 +8,7 @@ import {  ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { account, ID } from "@/app/appwrite";
 import { useActionState } from 'react';
+import { AppwriteException } from 'appwrite';
 type LoginState = {
     error?: string;
     success?: string;
@@ -29,13 +30,15 @@ async function loginAction(prevState: LoginState, formData: FormData): Promise<L
             redirect('/');
           },10)
       return { success: "Regsitartion successful" };
-    } catch (error: any) {
-        alert(error.message)
-      return { error: error.message || "Registeration failed" };
+    } catch (error: unknown) {
+        if(error instanceof AppwriteException){
+            return { error: error.message };
+        }
+        return { error: "Registeration failed" };
     }
   }  
 const Register = () => {
-    const [state, formAction] = useActionState<LoginState, FormData>(loginAction, {});
+    const formAction = useActionState<LoginState, FormData>(loginAction, {})[1];
     return (
         <section className="grid grid-cols-3 h-screen justify-stretch">
             <div className="bg-my_green flex justify-center h-full items-center col-span-2">
@@ -61,7 +64,7 @@ const Register = () => {
                             htmlFor="terms"
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                            By clicking 'Log In' you agree to our website Terms & Conditions.
+                            By clicking &apos;Log In&apos; you agree to our website Terms & Conditions.
                         </label>
                     </div>
                     <button type="submit" className="bg-my_green w-full p-3 text-left text-white text-xs rounded flex justify-between items-center"><span>REGISTER</span> <ArrowRight className="inline float-right" width={15} /></button>

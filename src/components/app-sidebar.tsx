@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings,Blinds, PercentSquare, PercentIcon } from "lucide-react"
+import { Home, Inbox,Blinds, PercentIcon } from "lucide-react"
 
 import {
   Sidebar,

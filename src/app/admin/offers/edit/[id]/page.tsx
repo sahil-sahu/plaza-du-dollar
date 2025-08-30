@@ -41,7 +41,7 @@ const EditOffer = ({ params }: { params: Promise<{ id: string }> }) => {
             }
         };
         fetchOffer();
-    }, [params]);
+    }, [params, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

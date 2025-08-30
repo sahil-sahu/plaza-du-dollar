@@ -1,12 +1,13 @@
 'use client'
-import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { account, databases } from "@/app/appwrite";
+import { account } from "@/app/appwrite";
 import { getCartItemsByCustomerId } from "@/lib/getCartItem";
 import type { Cart } from "@/types";
+import { Models } from "appwrite";
+import CartImg from "@/components/CartImg";
 
 const OrderSummaryClient = () => {
-    const [items, setItems] = useState<Cart[]>([]);
+    const [items, setItems] = useState<(Cart & Models.DefaultRow)[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
     const fetchCart = useCallback(async () => {
@@ -15,7 +16,7 @@ const OrderSummaryClient = () => {
             const user = await account.get();
             const cartItems = await getCartItemsByCustomerId(user.$id);
             setItems(cartItems);
-        } catch (e) {
+        } catch {
             setItems([]);
         } finally {
             setLoading(false);
@@ -52,13 +53,13 @@ const OrderSummaryClient = () => {
             <div>
                 <ul>
                     {items.map((it) => {
-                        const img = it.product.cover?.url || it.product.gallery?.[0]?.url || "";
+                        // const img = it.product.cover?.url || it.product.gallery?.[0]?.url || "";
                         const unit = (it.product.salePrice ?? it.product.price) || 0;
                         return (
                             <li key={it.$id} className="flex p-2">
-                                <Image width={40} height={40} alt={it.product.name} src={img} />
+                                <CartImg img={it.product.cover} />
                                 <div className="">
-                                    <h4>{it.product.name}</h4>
+                                    <h4 className="text-overflow-ellipsis max-w-[50vw] max-h-[20px] overflow-hidden">{it.product.name}</h4>
                                     <div>
                                         <span className="text-gray-400">x {it.quantity}</span>
                                         <span className="mx-2 font-bold text-blue-400">${unit}</span>
@@ -92,5 +93,3 @@ const OrderSummaryClient = () => {
 }
 
 export default OrderSummaryClient;
-
-

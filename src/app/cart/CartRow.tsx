@@ -1,12 +1,12 @@
-import Image from "next/image";
 import Link from "next/link";
 import { CirclePlus } from "lucide-react";
 import { QuantityFiller_small } from "@/components/quantityFiller";
-import { databases } from "@/app/appwrite";
+import { tablesDB } from "@/app/appwrite";
 import { Cart } from "@/types";
-
+import { Models } from "appwrite";
+import CartImg from "@/components/CartImg";
 interface CartRowProps {
-	item: Cart;
+	item: Cart & Models.DefaultRow;
 	onChanged?: () => void | Promise<void>;
 }
 
@@ -16,18 +16,17 @@ const CartRow = ({ item, onChanged }: CartRowProps) => {
 	const quantity = item.quantity;
 	const unitPrice = product.salePrice ?? product.price;
 	const subtotal = unitPrice * quantity;
-	const imageUrl = product.cover?.url || product.gallery?.[0]?.url || "";
-    
+	
 	const handleQuantityChange = async (next: number) => {
 		// fetch latest for safety (find by customer_id+product)
 		
 
 		if (next <= 0) {
-			await databases.deleteDocument("67b8c653002efe0cdbb2", "cart", item.$id);
+			await tablesDB.deleteRow("67b8c653002efe0cdbb2", "cart", item.$id);
 			await onChanged?.();
 			return;
 		}
-		await databases.updateDocument(
+		await tablesDB.updateRow(
 			"67b8c653002efe0cdbb2",
 			"cart",
 			item.$id,
@@ -41,16 +40,16 @@ const CartRow = ({ item, onChanged }: CartRowProps) => {
 			<td>
 				<div  className="justify-evenly items-center flex">
 					<CirclePlus onClick={async ()=>{
-					await databases.deleteDocument("67b8c653002efe0cdbb2", "cart", item.$id);
+					await tablesDB.deleteRow("67b8c653002efe0cdbb2", "cart", item.$id);
 					await onChanged?.();
 				}} className="rotate-45 cursor-pointer text-gray-400 hover:text-red-700" />
 					<Link href={`/product/${product.$id}`}>
-						<Image width={50} height={50} alt={product.name} src={imageUrl} className="cursor-pointer" />
+						<CartImg img={product.cover} />
 					</Link>
 				</div>
 			</td>
 			<td>
-				<Link href={`/product/${product.$id}`} className="hover:underline">{product.name}</Link>
+				<Link href={`/product/${product.$id}`} className="hover:underline "><div className="text-overflow-ellipsis max-w-[50vw] max-h-[20px] overflow-hidden">{product.name}</div></Link>
 			</td>
 			<td className="text-center">
 				${unitPrice}

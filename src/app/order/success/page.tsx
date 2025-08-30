@@ -1,35 +1,42 @@
 "use client"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import Header from "@/components/Header/header"
-import { CheckCircle, Package, Truck } from "lucide-react"
+import { CheckCircle, Truck, Package } from "lucide-react"
 import Link from "next/link"
 
+interface Order {
+    $id: string;
+    total: number;
+    paymentMethod: string;
+    orderStatus: string;
+}
+
 const OrderSuccessPage = () => {
-    const searchParams = useSearchParams()
-    const orderId = searchParams.get("oid")
-    const [orderDetails, setOrderDetails] = useState<any>(null)
-    const [loading, setLoading] = useState(true)
+    const searchParams = useSearchParams();
+    const orderId = searchParams.get("oid");
+    const [orderDetails, setOrderDetails] = useState<Order | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (orderId) {
-            fetchOrderDetails()
-        }
-    }, [orderId])
-
-    const fetchOrderDetails = async () => {
-        try {
-            const response = await fetch(`/api/orders/${orderId}`)
-            if (response.ok) {
-                const order = await response.json()
-                setOrderDetails(order)
+        const fetchOrderDetails = async () => {
+            if (!orderId) return;
+            
+            try {
+                const response = await fetch(`/api/orders/${orderId}`);
+                if (response.ok) {
+                    const order: Order = await response.json();
+                    setOrderDetails(order);
+                }
+            } catch (error) {
+                console.error("Failed to fetch order details:", error);
+            } finally {
+                setLoading(false);
             }
-        } catch (error) {
-            console.error("Failed to fetch order details:", error)
-        } finally {
-            setLoading(false)
-        }
-    }
+        };
+
+        fetchOrderDetails();
+    }, [orderId]);
 
     if (loading) {
         return (
@@ -140,4 +147,12 @@ const OrderSuccessPage = () => {
     )
 }
 
-export default OrderSuccessPage
+const SuspenseOrderSuccessPage = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <OrderSuccessPage />
+        </Suspense>
+    )
+}
+
+export default SuspenseOrderSuccessPage

@@ -22,7 +22,7 @@ const CatCard = (payload:{
 }) =>{
     const router = useRouter();
     const deleteProduct = async () => {
-        const res = await databases.deleteDocument('67b8c653002efe0cdbb2',
+        await databases.deleteDocument('67b8c653002efe0cdbb2',
                 'category',
                 payload.id,)
         router.refresh()

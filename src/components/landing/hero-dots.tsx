@@ -5,7 +5,7 @@ import { DotButton, useDotButton } from '@/components/ui/carouselDots';
 import { useEffect, useState } from "react";
 
 export default function HeroDots() {
-    const [api, setApi] = useState<CarouselApi>()
+    const [api] = useState<CarouselApi>()
     const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(api)
 
     useEffect(() => {

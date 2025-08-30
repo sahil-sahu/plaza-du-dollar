@@ -1,11 +1,11 @@
 import { Models } from "node-appwrite";
-
+import {Models as AppwriteModels} from "appwrite";
 export interface imgObj {
     name: string;
     url : string;
     id: string;
 }
-export interface categoryObj extends Models.Document {
+export interface categoryObj extends Models.Document, AppwriteModels.DefaultRow {
     name: string;
     image_url : string;
     image_id: string;
@@ -26,7 +26,7 @@ export interface productPayload {
     chips: string;
 }
 
-export interface Product extends Models.Document {
+export interface Product extends Models.Document, AppwriteModels.DefaultRow {
     name: string;
     description: string;
     price: number;
@@ -43,7 +43,7 @@ export interface Product extends Models.Document {
     specification: string|null;
 }
 
-export interface Offer extends Models.Document {
+export interface Offer extends Models.Document, AppwriteModels.DefaultRow {
     image: imgObj;
     offerName: string;
     showOnLanding?: boolean;
@@ -51,16 +51,15 @@ export interface Offer extends Models.Document {
     products: Product[];
 }
 
-export interface Cart extends Models.Document {
+export interface Cart extends Models.Document, AppwriteModels.DefaultRow {
     customer_id: string;
     product: Product;
     quantity: number;
 }
 
-export interface Offer extends Models.Document {
-    image: imgObj;
-    offerName: string;
-    showOnLanding?: boolean;
-    showOnHero?: boolean;
-    products: Product[];
+export interface Order extends Models.Document, AppwriteModels.DefaultRow {
+    total: number;
+    paymentMethod: string;
+    orderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+    // Add any other order-related fields as needed
 }

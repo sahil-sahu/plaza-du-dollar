@@ -3,25 +3,23 @@ import Image from 'next/image';
 import profile from './assets/Profile.svg'
 import Link from 'next/link';
 import { account } from '@/app/appwrite';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
 const SignUpBox = () =>{
     const [logged, setLogin] = useState<string|undefined>();
     useLayoutEffect(()=>{
-        const check = async () => {
+        const fetchUser = async () => {
             try {
-                const user = await account.getSession('current');
-                if (user && user.$id) {
-                    // User is logged in
+                const user = await account.get();
+                if (user) {
                     setLogin(user.$id);
                 }
-
-            } catch (error) {
-                // console.log("Error fetching user info:", error);
+            } catch {
+                // User not logged in
                 return;
             }
-        }
-        check();
+        };
+        fetchUser();
     },[])
     if(logged != undefined){
         return (

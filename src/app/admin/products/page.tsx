@@ -1,7 +1,7 @@
 import { databases } from "@/appwrite_server";
 
 import PdtCard from "./components/pdtCard";
-import { Product, categoryObj } from "@/types";
+import { Product } from "@/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Query } from "node-appwrite";
@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 
 const Products = async ({ searchParams : searchParams_ }: { searchParams: Promise<{ category?: string }> }) => {
     try {
-        let queries = [];
+        const queries = [];
         queries.push(Query.select(["*", "cover.*", "gallery.*", "category.*"]));
         const searchParams = await searchParams_;
         // Add category filter if provided
@@ -19,14 +19,14 @@ const Products = async ({ searchParams : searchParams_ }: { searchParams: Promis
             queries.push(Query.equal('category', searchParams.category));
             
             // Fetch category details for the header
-            const category = await databases.getDocument(
+            await databases.getDocument(
                 "67b8c653002efe0cdbb2",
                 "category",
                 searchParams.category
-            ) as categoryObj;
+            );
         }
 
-        const {total, documents} = await databases.listDocuments(
+        const {documents} = await databases.listDocuments(
             "67b8c653002efe0cdbb2",
             "products",
             queries.length > 0 ? queries : undefined
@@ -85,8 +85,8 @@ const Products = async ({ searchParams : searchParams_ }: { searchParams: Promis
                 )}
             </section>
         )
-    } catch (error) {
-        console.log(error)
+    } catch (_error) {
+        console.log(_error)
         return (
             <section>
                 <h1>

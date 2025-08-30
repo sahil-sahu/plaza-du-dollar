@@ -7,6 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import { Models } from "appwrite";
 import Image from "next/image";
 import { Checkbox } from "@/components/ui/checkbox";
+import defaultImage from "@/defaultImages/box.png";
 
 const OfferProducts = () => {
     const router = useRouter();
@@ -26,7 +27,7 @@ const OfferProducts = () => {
                     "67b8c653002efe0cdbb2",
                     "offers",
                     offerId
-                ) as Models.Document & Offer;
+                ) as Models.DefaultDocument & Offer;
                 setOffer(offerData);
                 
                 // Fetch all products
@@ -34,7 +35,7 @@ const OfferProducts = () => {
                     "67b8c653002efe0cdbb2",
                     "products"
                 );
-                setAllProducts(documents as Product[]);
+                setAllProducts(documents as (Product & Models.DefaultRow)[]);
                 
                 // Set initially selected products
                 setSelectedProducts(offerData.products?.map(p => p.$id) || []);
@@ -99,7 +100,7 @@ const OfferProducts = () => {
                         />
                         <div className="flex-1">
                             <Image
-                                src={product.cover.url}
+                                src={product.cover?.url || defaultImage}
                                 alt={product.name}
                                 width={100}
                                 height={100}

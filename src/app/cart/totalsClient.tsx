@@ -14,7 +14,7 @@ const TotalsClient = () => {
             const user = await account.get();
             const cartItems = await getCartItemsByCustomerId(user.$id);
             setItems(cartItems);
-        } catch (e) {
+        } catch {
             setItems([]);
         } finally {
             setLoading(false);
@@ -98,5 +98,3 @@ const TotalsClient = () => {
 }
 
 export default TotalsClient;
-
-

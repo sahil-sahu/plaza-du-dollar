@@ -4,9 +4,10 @@ import { account } from "@/app/appwrite";
 import type { Cart } from "@/types";
 import CartRow from "./CartRow";
 import { getCartItemsByCustomerId } from "@/lib/getCartItem";
+import { Models } from "appwrite";
 
 const CartRowsClient = () => {
-	const [items, setItems] = useState<Cart[]>([]);
+	const [items, setItems] = useState<(Cart & Models.DefaultRow)[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const fetchCart = useCallback(async () => {

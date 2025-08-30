@@ -15,7 +15,7 @@ export type SquareOrderResult = {
 };
 // https://developer.squareup.com/explorer/square/locations-api/create-location
 export async function createSquareOrder(args: CreateSquareOrderArgs): Promise<SquareOrderResult> {
-  const { value, currencyCode, returnUrl, cancelUrl, orderId } = args;
+  const { value, currencyCode, returnUrl, orderId } = args;
   const base = process.env.SQUARE_API_BASE || "https://connect.squareupsandbox.com";
   const locationId = process.env.SQUARE_LOCATION_ID;
   const accessToken = process.env.SQUARE_APPLICATION_SECRET;

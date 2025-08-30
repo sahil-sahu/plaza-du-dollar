@@ -7,6 +7,16 @@ type CreatePaypalOrderArgs = {
   cancelUrl: string;
 };
 
+interface PaypalOrderResponse {
+  id: string;
+  status: string;
+  links: Array<{
+    href: string;
+    rel: string;
+    method: string;
+  }>;
+}
+
 export type PaypalOrderResult = {
   id: string;
   approvalUrl: string;
@@ -96,8 +106,10 @@ export async function createPaypalOrder(args: CreatePaypalOrderArgs): Promise<Pa
     }
   );
 
-  const id: string = orderRes.data.id;
-  const approvalUrl: string | undefined = (orderRes.data.links || []).find((l: any) => l.rel === "approve")?.href;
+  const data: PaypalOrderResponse = orderRes.data;
+
+  const id: string = data.id;
+  const approvalUrl: string | undefined = data.links.find((l) => l.rel === "approve")?.href;
   if (!approvalUrl) {
     throw new Error("Missing approval URL from PayPal response");
   }

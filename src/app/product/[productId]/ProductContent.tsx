@@ -9,10 +9,14 @@ interface ProductContentProps {
 }
 
 const ProductContent = ({ product }: ProductContentProps) => {
+  const gallery = product.gallery?.map(img => img.url) ?? [];
+  if(product.cover?.url){
+    gallery.unshift(product.cover.url);
+  }
   return (
     <section className="container grid md:grid-cols-2 m-auto">
       <div className="p-5">
-        <ProductCarousel imgs={[...(product.gallery?.map(img => img.url)), product.cover.url]} />
+        <ProductCarousel imgs={gallery} />
       </div>
       <div className="pt-8 p-4">
         <Rating rate={4.5} review={2000} />

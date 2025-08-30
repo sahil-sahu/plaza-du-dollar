@@ -15,7 +15,7 @@ const SimilarProducts = () => {
             {
               dummyCard.map((card) => (
                 <CarouselItem className="md:basis-1/3 lg:basis-1/4" key={card.id}>
-                    <Card1  mrp={card.mrp} sp={card.price} name={card.name} img={card.image}></Card1>
+                    <Card1  mrp={card.mrp} sp={card.price} name={card.name} img={card.image} uid={card.id+""}></Card1>
                 </CarouselItem>
               ))
             }

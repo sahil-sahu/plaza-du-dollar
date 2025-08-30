@@ -1,5 +1,4 @@
 import Card1 from "@/components/card1";
-import Card2 from "@/components/card2";
 import CategoryCard from "@/components/categoryCard";
 import ExpandedCategory from "@/components/expandedCategory";
 import Footer from "@/components/Footer/footer";
@@ -8,7 +7,7 @@ import CarouselComponent from "@/components/landing/hero";
 import OfferCarousel from "@/components/offerCard";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { dummyCard, dummyOffers } from "@/dummyData";
+import { dummyCard } from "@/dummyData";
 import { getLandingCategories } from "@/lib/getLandingCategories";
 import { getLandingOffers } from "@/lib/getLandingOffers";
 import { getExpandedCategories } from "@/lib/getExpandedCategories";

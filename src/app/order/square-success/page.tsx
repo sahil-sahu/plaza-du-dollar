@@ -1,35 +1,43 @@
 "use client"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import Header from "@/components/Header/header"
-import { CheckCircle, CreditCard, Package } from "lucide-react"
+import { CheckCircle, CreditCard } from "lucide-react"
 import Link from "next/link"
+
+interface Order {
+  $id: string
+  total: number
+  paymentMethod: string
+  orderStatus: string
+}
 
 const SquareSuccessPage = () => {
     const searchParams = useSearchParams()
     const orderId = searchParams.get("oid")
-    const [orderDetails, setOrderDetails] = useState<any>(null)
+    const [orderDetails, setOrderDetails] = useState<Order | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        if (orderId) {
-            fetchOrderDetails()
-        }
+        const fetchOrderDetails = async () => {
+            if (!orderId) return;
+            
+            try {
+                const response = await fetch(`/api/orders/${orderId}`)
+                if (response.ok) {
+                    const order: Order = await response.json()
+                    setOrderDetails(order)
+                }
+            } catch (error) {
+                console.error("Failed to fetch order details:", error)
+            } finally {
+                setLoading(false)
+            }
+        };
+
+        fetchOrderDetails();
     }, [orderId])
 
-    const fetchOrderDetails = async () => {
-        try {
-            const response = await fetch(`/api/orders/${orderId}`)
-            if (response.ok) {
-                const order = await response.json()
-                setOrderDetails(order)
-            }
-        } catch (error) {
-            console.error("Failed to fetch order details:", error)
-        } finally {
-            setLoading(false)
-        }
-    }
 
     if (loading) {
         return (
@@ -126,4 +134,12 @@ const SquareSuccessPage = () => {
     )
 }
 
-export default SquareSuccessPage
+const SuspenseSquareSuccessPage = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <SquareSuccessPage />
+        </Suspense>
+    )
+}
+
+export default SuspenseSquareSuccessPage
