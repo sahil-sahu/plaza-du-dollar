@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Public_Sans } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
-const publicSans = Public_Sans({
-  variable: "--font-public-sans",
+const publicSans = Montserrat({
   subsets: ['latin'],
-  display: 'swap',
+  weight: ['500', '600', '700'],
+  style: ['normal', 'italic'],
 });
 
 export const metadata: Metadata = {

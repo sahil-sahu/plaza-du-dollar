@@ -5,8 +5,16 @@ import { str } from "crc-32";
 import { NextResponse } from 'next/server';
 import { databases } from "@/appwrite_server";
 import { Query } from "node-appwrite";
+import fs_ from "fs";
+import path from "path";
 
-const CACHE_DIR = './certs';
+const CACHE_DIR = path.join(process.cwd(), "certs");
+
+if (!fs_.existsSync(CACHE_DIR)) {
+  fs_.mkdirSync(CACHE_DIR, { recursive: true });
+}
+
+// const CACHE_DIR = './certs';
 const WEBHOOK_ID = process.env.PAYPAL_PAYMENT_HOOK_KEY;
 
 interface PayPalWebhookEvent {
